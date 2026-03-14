@@ -1,0 +1,4 @@
+.env
+*.env
+keys.json
+.DS_Store
