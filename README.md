@@ -1,6 +1,8 @@
 # stock-images
 
-An agent skill for searching and downloading stock images from Pexels, Unsplash, and Pixabay.
+An Agent Skill for searching and downloading stock images from Pexels, Unsplash, and Pixabay.
+
+Works with Claude Code, Codex, and other agents supported by the `npx skills` CLI.
 
 ## Features
 
@@ -14,6 +16,18 @@ An agent skill for searching and downloading stock images from Pexels, Unsplash,
 
 ```bash
 npx skills@latest add jeanpfs/stock-images --all -y -g
+```
+
+Install for Claude Code only:
+
+```bash
+npx skills@latest add jeanpfs/stock-images --skill stock-images -a claude-code -g -y
+```
+
+Install for Codex only:
+
+```bash
+npx skills@latest add jeanpfs/stock-images --skill stock-images -a codex -g -y
 ```
 
 ## Setup
