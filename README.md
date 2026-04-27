@@ -24,7 +24,7 @@ After installing, you need API keys from at least one provider (all free):
 - **Unsplash**: https://unsplash.com/developers
 - **Pixabay**: https://pixabay.com/api/docs/
 
-See [setup.md](setup.md) for detailed instructions.
+See [SETUP.md](SETUP.md) for detailed instructions.
 
 ## Usage Examples
 
