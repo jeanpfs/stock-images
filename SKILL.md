@@ -1,6 +1,6 @@
 ---
 name: stock-images
-description: Search and download stock images from Pexels, Unsplash, and Pixabay directly via curl. Use when users need stock photos for projects — landing pages, UI design, content creation. Activates on explicit stock image requests ("find stock photos of...") and design/UI contexts needing images ("need a hero image for this landing page").
+description: Search and download stock photos from Pexels, Unsplash, and Pixabay for projects, landing pages, UI mockups, and content. Use when users explicitly ask to find stock photos, need a hero/profile/content image, or want to download a selected stock image.
 ---
 
 ## Security Rules
@@ -40,12 +40,23 @@ test -f ~/.config/stock-images/keys.json && stat -f "%Lp" ~/.config/stock-images
   3. Once the user provides their keys, create the config file via Bash with `chmod 600`
   4. NEVER display the keys back after saving
 - If permissions are not `600`: warn the user and offer to fix with `chmod 600 ~/.config/stock-images/keys.json`.
-- If the file exists with correct permissions: read the keys silently (do NOT display them).
+- If the file exists with correct permissions: use the keys silently. Do NOT display the file contents, the keys, or commands containing key values.
 
-Read the keys:
+Determine configured providers without printing secret values:
 
 ```bash
-cat ~/.config/stock-images/keys.json
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+config = Path.home() / ".config" / "stock-images" / "keys.json"
+data = json.loads(config.read_text())
+providers = [
+    name for name in ("pexels", "unsplash", "pixabay")
+    if data.get(name) and not str(data[name]).startswith("YOUR_")
+]
+print("\n".join(providers))
+PY
 ```
 
 Parse the JSON to determine which providers are configured (have non-empty, non-placeholder values). At least one provider is required.
@@ -57,6 +68,8 @@ Extract from the user's request:
 - **count**: how many images (default: 5, max: 20)
 - **orientation**: landscape, portrait, or square — infer from context (e.g., "hero banner" → landscape, "profile photo" → portrait)
 - **provider**: specific provider or "all" (default: all configured)
+
+Keep the parsed search results and metadata available for follow-up requests in the same conversation. If the user later says "download image #3", map that number back to the exact provider, image URL, download URL, author, author profile, and attribution data from the presented results.
 
 Run curl commands for each configured provider. When multiple providers are configured, run them in parallel (separate Bash tool calls).
 
@@ -163,6 +176,8 @@ ls -lh "./images/FILENAME"
    > Attribution required: `Photo by [Author](author_url) on [Provider]`
 
 Alert if file size > 10MB — the user may want a smaller resolution.
+
+Attribution and license requirements vary by provider and project use. Always preserve and present author attribution metadata so the user can comply with the relevant provider terms.
 
 ## Behavior Guidelines
 

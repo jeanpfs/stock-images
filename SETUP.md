@@ -28,11 +28,11 @@ Replace the placeholder values with your actual keys. Remove any providers you d
 ## Verify Setup
 
 ```bash
-cat ~/.config/stock-images/keys.json
+test -f ~/.config/stock-images/keys.json && ls -la ~/.config/stock-images/keys.json
 ```
 
-You should see your keys. The file permissions should be `-rw-------` (owner read/write only):
+The file permissions should be `-rw-------` (owner read/write only). To verify the JSON is valid without printing your keys:
 
 ```bash
-ls -la ~/.config/stock-images/keys.json
+python3 -m json.tool ~/.config/stock-images/keys.json > /dev/null && echo "Config JSON is valid"
 ```
