@@ -1,6 +1,6 @@
 # stock-images
 
-A Claude Code skill for searching and downloading stock images from Pexels, Unsplash, and Pixabay.
+An agent skill for searching and downloading stock images from Pexels, Unsplash, and Pixabay.
 
 ## Features
 
