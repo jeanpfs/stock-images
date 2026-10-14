@@ -55,6 +55,12 @@ See [SETUP.md](SETUP.md) for detailed instructions.
 - HTTPS enforced on all connections
 - File size validation on downloads
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Changes are tracked in [CHANGELOG.md](CHANGELOG.md).
+
+For vulnerabilities, use GitHub's "Report a vulnerability" as described in [SECURITY.md](SECURITY.md).
+
 ## License
 
 MIT

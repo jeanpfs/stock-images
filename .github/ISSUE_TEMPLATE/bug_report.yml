@@ -1,0 +1,43 @@
+name: Bug report
+description: The skill misbehaves (wrong search, failed download, bad instructions)
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Never paste API keys or full curl commands containing keys.** For security problems use "Report a vulnerability" in the Security tab instead.
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Agent
+      options: [Claude Code, Codex, Other]
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      options: [Pexels, Unsplash, Pixabay, All / not provider specific]
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Skill version (commit hash or install date)
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Prompt or steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output (keys redacted)
+      render: text
