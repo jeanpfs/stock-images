@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format is based on 
 
 ## [Unreleased]
 
+### Docs
+
+- README demo GIF (a real Claude Code session using the skill), and the scripts that record it (`scripts/demo/`).
+
 ## [0.1.0] - 2026-10-15
 
 ### Added

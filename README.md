@@ -4,6 +4,8 @@ An Agent Skill for searching and downloading stock images from Pexels, Unsplash,
 
 Works with Claude Code, Codex, and other agents supported by the `npx skills` CLI.
 
+![Claude Code uses the stock-images skill to search Pexels, Unsplash and Pixabay, download a landscape sunrise photo to public/images/hero.jpg and report the photo credit](assets/demo.gif)
+
 ## Features
 
 - Search stock images across multiple providers simultaneously
