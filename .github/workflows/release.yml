@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to validate (without leading v); no release is published from a manual run
+        required: true
+        default: '0.1.0'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: publish release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG_NAME: ${{ github.event_name == 'push' && github.ref_name || format('v{0}', inputs.version) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Verify tag matches declared version
+        run: |
+          set -euo pipefail
+          ver="${TAG_NAME#v}"
+          pat="${ver//./\\.}"
+          if ! grep -q "^## \[$pat\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no section for $ver"
+            exit 1
+          fi
+          latest=$(sed -n 's/^## \[\([0-9][^]]*\)\].*/\1/p' CHANGELOG.md | head -n1)
+          if [ "$latest" != "$ver" ]; then
+            echo "::error::Latest CHANGELOG version is $latest, not $ver"
+            exit 1
+          fi
+          fm_ver=$(sed -n '1,/^---$/{s/^version:[[:space:]]*//p}' SKILL.md | tr -d '"' | head -n1)
+          if [ -n "$fm_ver" ] && [ "$fm_ver" != "$ver" ]; then
+            echo "::error::SKILL.md version $fm_ver does not match $ver"
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: pip install pyyaml
+      - name: Skill frontmatter, links, shell snippets, secrets
+        run: python3 scripts/check-skill.py
+
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          set -euo pipefail
+          ver="${TAG_NAME#v}"
+          pat="${ver//./\\.}"
+          sed -n "/^## \[$pat\]/,/^## /p" CHANGELOG.md | grep -v '^## ' > notes.md || true
+          if [ -s notes.md ] && grep -q '[^[:space:]]' notes.md; then
+            echo "Release notes taken from CHANGELOG.md:"
+            cat notes.md
+          else
+            echo "No CHANGELOG section for $ver; falling back to generated notes"
+            rm -f notes.md
+          fi
+
+      - name: Create or update GitHub release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$TAG_NAME"
+          if [ -f notes.md ]; then
+            notes=(--notes-file notes.md)
+          else
+            notes=(--generate-notes)
+          fi
+          if gh release view "$tag" >/dev/null 2>&1; then
+            if [ -f notes.md ]; then
+              gh release edit "$tag" --title "$tag" --notes-file notes.md
+            else
+              echo "Release $tag already exists; leaving its notes untouched"
+            fi
+          else
+            gh release create "$tag" --verify-tag --title "$tag" "${notes[@]}"
+          fi
